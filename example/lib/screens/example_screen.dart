@@ -55,17 +55,15 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       ],
     );
     M7LivelynessDetection.instance.configure(
-      lineColor: Colors.white,
+      lineColor: Colors.black,
       dotColor: Colors.purple.shade800,
       dotSize: 2.0,
       lineWidth: 2,
       dashValues: [2.0, 5.0],
       displayDots: false,
-      displayLines: true,
+      displayLines: false,
       thresholds: [
-        M7SmileDetectionThreshold(
-          probability: 0.8,
-        ),
+        M7SmileDetectionThreshold(probability: 0.8),
         M7BlinkDetectionThreshold(
           leftEyeProbability: 0.25,
           rightEyeProbability: 0.25,
@@ -79,11 +77,21 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
     final M7CapturedImage? response =
         await M7LivelynessDetection.instance.detectLivelyness(
       context,
+      appBar: AppBar(),
+      scaffoldColor: Colors.grey,
+      primaryColor: Colors.yellow,
+      backgroundColor: Colors.white,
+      description: const Text(
+        'Расположите свое лицо в',
+        textAlign: TextAlign.center,
+      ),
+      circleIndicator:
+          const Center(child: CircularProgressIndicator.adaptive()),
       config: M7DetectionConfig(
         steps: _veificationSteps,
-        startWithInfoScreen: _startWithInfo,
-        maxSecToDetect: _timeOutDuration == 100 ? 2500 : _timeOutDuration,
-        allowAfterMaxSec: _allowAfterTimeOut,
+        startWithInfoScreen: false,
+        maxSecToDetect: 2500,
+        allowAfterMaxSec: false,
         captureButtonColor: Colors.red,
       ),
     );

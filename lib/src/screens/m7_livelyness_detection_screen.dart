@@ -7,9 +7,21 @@ import 'package:m7_livelyness_detection/index.dart';
 List<CameraDescription> availableCams = [];
 
 class M7LivelynessDetectionScreenV1 extends StatefulWidget {
+  final PreferredSizeWidget appBar;
   final M7DetectionConfig config;
+  final Color primaryColor;
+  final Color scaffoldColor;
+  final Color backgroundColor;
+  final Widget circleIndicator;
+  final Widget description;
   const M7LivelynessDetectionScreenV1({
     required this.config,
+    required this.appBar,
+    required this.primaryColor,
+    required this.scaffoldColor,
+    required this.backgroundColor,
+    required this.circleIndicator,
+    required this.description,
     super.key,
   });
 
@@ -60,9 +72,9 @@ class _MLivelyness7DetectionScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: _buildBody(),
-      ),
+      appBar: widget.appBar,
+      backgroundColor: widget.scaffoldColor,
+      body: _buildBody(),
     );
   }
 
@@ -117,22 +129,6 @@ class _MLivelyness7DetectionScreenState
 
   void _startLiveFeed() async {
     final camera = availableCams[_cameraIndex];
-    // _cameraController = CameraController(
-    //   camera,
-    //   ResolutionPreset.high,
-    //   imageFormatGroup: ImageFormatGroup.jpeg,
-    //   enableAudio: false,
-    // );
-    // _cameraController?.initialize().then((_) {
-    //   if (!mounted) {
-    //     return;
-    //   }
-    //   _cameraController?.startImageStream(_processCameraImage);
-    //   if (mounted) {
-    //     _startTimer();
-    //     setState(() {});
-    //   }
-    // });
     _cameraController = CameraController(
       camera,
       ResolutionPreset.high,
@@ -282,6 +278,7 @@ class _MLivelyness7DetectionScreenState
         () => _isTakingPicture = true,
       );
       await _cameraController?.stopImageStream();
+
       final XFile? clickedImage = await _cameraController?.takePicture();
       if (clickedImage == null) {
         _startLiveFeed();
@@ -417,7 +414,7 @@ class _MLivelyness7DetectionScreenState
     return Stack(
       children: [
         _isInfoStepCompleted
-            ? _buildDetectionBody()
+            ? Column(children: [_buildDetectionBody()])
             : M7LivelynessInfoWidget(
                 onStartTap: () {
                   if (mounted) {
@@ -428,30 +425,6 @@ class _MLivelyness7DetectionScreenState
                   _startLiveFeed();
                 },
               ),
-        Align(
-          alignment: Alignment.topRight,
-          child: Padding(
-            padding: const EdgeInsets.only(
-              right: 10,
-              top: 10,
-            ),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.black,
-              child: IconButton(
-                onPressed: () => _onDetectionCompleted(
-                  imgToReturn: null,
-                  didCaptureAutomatically: null,
-                ),
-                icon: const Icon(
-                  Icons.close_rounded,
-                  size: 20,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ),
       ],
     );
   }
@@ -459,74 +432,99 @@ class _MLivelyness7DetectionScreenState
   Widget _buildDetectionBody() {
     if (_cameraController == null ||
         _cameraController?.value.isInitialized == false) {
-      return const Center(
-        child: CircularProgressIndicator.adaptive(),
-      );
+      return Expanded(child: widget.circleIndicator);
     }
-    final size = MediaQuery.of(context).size;
-    var scale = size.aspectRatio * _cameraController!.value.aspectRatio;
-    if (scale < 1) scale = 1 / scale;
+    // final size = MediaQuery.of(context).size;
+    // var scale = size.aspectRatio * _cameraController!.value.aspectRatio;
+    // if (scale < 1) scale = 1 / scale;
     final Widget cameraView = CameraPreview(_cameraController!);
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Center(
-          child: cameraView,
+    return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: widget.backgroundColor,
+          borderRadius: const BorderRadius.all(Radius.circular(16)),
         ),
-        BackdropFilter(
-          filter: ui.ImageFilter.blur(
-            sigmaX: 5.0,
-            sigmaY: 5.0,
-          ),
-          child: Container(
-            color: Colors.transparent,
-            width: double.infinity,
-            height: double.infinity,
-          ),
-        ),
-        Center(
-          child: cameraView,
-        ),
-        if (_customPaint != null) _customPaint!,
-        M7LivelynessDetectionStepOverlay(
-          key: _stepsKey,
-          steps: _steps,
-          onCompleted: () => Future.delayed(
-            const Duration(milliseconds: 500),
-            () => _takePicture(
-              didCaptureAutomatically: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.width - 50,
+              child: Stack(
+                children: [
+                  Center(
+                    child: ClipOval(
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(color: widget.primaryColor),
+                        child: ClipOval(child: cameraView),
+                      ),
+                    ),
+                  ),
+                  M7LivelynessDetectionStepOverlay(
+                    key: _stepsKey,
+                    steps: _steps,
+                    circleIndicator: widget.circleIndicator,
+                    onCompleted: () => Future.delayed(
+                      const Duration(milliseconds: 500),
+                      () => _takePicture(
+                        didCaptureAutomatically: true,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-        Visibility(
-          visible: _isCaptureButtonVisible,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Spacer(
-                flex: 20,
-              ),
-              MaterialButton(
-                onPressed: () => _takePicture(
-                  didCaptureAutomatically: false,
-                ),
-                color: widget.config.captureButtonColor ??
-                    Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                padding: const EdgeInsets.all(16),
-                shape: const CircleBorder(),
-                child: const Icon(
-                  Icons.camera_alt,
-                  size: 24,
-                ),
-              ),
-              const Spacer(),
-            ],
-          ),
-        ),
-      ],
-    );
+            const SizedBox(height: 24),
+            widget.description,
+          ],
+        )
+        // Column(
+        //   children: [
+        //     // Stack(
+        //     //   children: [
+        //     //     // Positioned.fill(child: cameraView),
+        //     //     // if (_customPaint != null) _customPaint!,
+        //     //     // M7LivelynessDetectionStepOverlay(
+        //     //     //   key: _stepsKey,
+        //     //     //   steps: _steps,
+        //     //     //   onCompleted: () => Future.delayed(
+        //     //     //     const Duration(milliseconds: 500),
+        //     //     //     () => _takePicture(
+        //     //     //       didCaptureAutomatically: true,
+        //     //     //     ),
+        //     //     //   ),
+        //     //     // ),
+        //     //     // Visibility(
+        //     //     //   visible: _isCaptureButtonVisible,
+        //     //     //   child: Column(
+        //     //     //     mainAxisAlignment: MainAxisAlignment.start,
+        //     //     //     crossAxisAlignment: CrossAxisAlignment.stretch,
+        //     //     //     mainAxisSize: MainAxisSize.min,
+        //     //     //     children: [
+        //     //     //       const Spacer(flex: 20),
+        //     //     //       MaterialButton(
+        //     //     //         onPressed: () => _takePicture(
+        //     //     //           didCaptureAutomatically: false,
+        //     //     //         ),
+        //     //     //         color: widget.config.captureButtonColor ??
+        //     //     //             Theme.of(context).primaryColor,
+        //     //     //         textColor: Colors.white,
+        //     //     //         padding: const EdgeInsets.all(16),
+        //     //     //         shape: const CircleBorder(),
+        //     //     //         child: const Icon(
+        //     //     //           Icons.camera_alt,
+        //     //     //           size: 24,
+        //     //     //         ),
+        //     //     //       ),
+        //     //     //       const Spacer(),
+        //     //     //     ],
+        //     //     //   ),
+        //     //     // ),
+        //     //   ],
+        //     // ),
+        //   ],
+        // ),
+        );
   }
 }

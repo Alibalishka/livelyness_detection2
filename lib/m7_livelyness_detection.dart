@@ -76,15 +76,27 @@ class M7LivelynessDetection {
   /// Parameters: -
   /// * context: - Positional Parameter that will accept a `BuildContext` using which it will redirect the a new screen.
   /// * config: - Accepts a `M7DetectionConfig` object which will hold all the setup config of the package.
-  Future<M7CapturedImage?> detectLivelyness(
-    BuildContext context, {
-    required M7DetectionConfig config,
-  }) async {
+  Future<M7CapturedImage?> detectLivelyness(BuildContext context,
+      {required M7DetectionConfig config,
+      required PreferredSizeWidget appBar,
+      required Color primaryColor,
+      required Color scaffoldColor,
+      required Color backgroundColor,
+      required Widget circleIndicator,
+      required Widget description,
+      required}) async {
     _safeAreaPadding = MediaQuery.of(context).padding;
     final M7CapturedImage? capturedFacePath = await Navigator.of(context).push(
       MaterialPageRoute(
-          builder: (context) => M7LivelynessDetectionScreenV1(config: config)
-
+          builder: (context) => M7LivelynessDetectionScreenV1(
+                config: config,
+                appBar: appBar,
+                primaryColor: primaryColor,
+                scaffoldColor: scaffoldColor,
+                backgroundColor: backgroundColor,
+                circleIndicator: circleIndicator,
+                description: description,
+              )
           // M7LivelynessDetectionPageV2(config: config),
           ),
     );
@@ -101,8 +113,8 @@ class M7LivelynessDetection {
     Color dotColor = const Color(0xffab48e0),
     double lineWidth = 1.6,
     double dotSize = 2.0,
-    bool displayLines = true,
-    bool displayDots = true,
+    bool displayLines = false,
+    bool displayDots = false,
     List<double>? dashValues,
   }) {
     assert(

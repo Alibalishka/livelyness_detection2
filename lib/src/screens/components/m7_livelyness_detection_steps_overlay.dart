@@ -3,10 +3,12 @@ import 'package:m7_livelyness_detection/index.dart';
 class M7LivelynessDetectionStepOverlay extends StatefulWidget {
   final List<M7LivelynessStepItem> steps;
   final VoidCallback onCompleted;
+  final Widget circleIndicator;
   const M7LivelynessDetectionStepOverlay({
     Key? key,
     required this.steps,
     required this.onCompleted,
+    required this.circleIndicator,
   }) : super(key: key);
 
   @override
@@ -47,14 +49,47 @@ class M7LivelynessDetectionStepOverlayState
       width: double.infinity,
       color: Colors.transparent,
       child: Stack(
-        fit: StackFit.expand,
+        // fit: StackFit.expand,
         children: [
-          _buildBody(),
+          // _buildBody(),
+          PageView.builder(
+            controller: _pageController,
+            itemCount: widget.steps.length,
+            itemBuilder: (context, index) {
+              return _buildAnimatedWidget(
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        alignment: Alignment.center,
+                        margin: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width / 5),
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          widget.steps[index].title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                isExiting: index != _currentIndex,
+              );
+            },
+          ),
           Visibility(
             visible: _isLoading,
-            child: const Center(
-              child: CircularProgressIndicator.adaptive(),
-            ),
+            child: widget.circleIndicator,
           ),
         ],
       ),
@@ -112,36 +147,36 @@ class M7LivelynessDetectionStepOverlayState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          height: 10,
-          width: double.infinity,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                flex: _currentIndex + 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topRight: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    ),
-                    color: Colors.green.shade800,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: widget.steps.length - (_currentIndex + 1),
-                child: Container(
-                  color: Colors.transparent,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const Spacer(),
+        // SizedBox(
+        //   height: 10,
+        //   width: double.infinity,
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.start,
+        //     crossAxisAlignment: CrossAxisAlignment.center,
+        //     mainAxisSize: MainAxisSize.min,
+        //     children: [
+        //       Expanded(
+        //         flex: _currentIndex + 1,
+        //         child: Container(
+        //           decoration: const BoxDecoration(
+        //             borderRadius: BorderRadius.only(
+        //               topRight: Radius.circular(20),
+        //               bottomRight: Radius.circular(20),
+        //             ),
+        //             color: Colors.transparent,
+        //           ),
+        //         ),
+        //       ),
+        //       Expanded(
+        //         flex: widget.steps.length - (_currentIndex + 1),
+        //         child: Container(
+        //           color: Colors.transparent,
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
+        // const Spacer(),
         Flexible(
           flex: 2,
           child: AbsorbPointer(
@@ -152,7 +187,7 @@ class M7LivelynessDetectionStepOverlayState
               itemBuilder: (context, index) {
                 return _buildAnimatedWidget(
                   Padding(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -185,9 +220,7 @@ class M7LivelynessDetectionStepOverlayState
             ),
           ),
         ),
-        const Spacer(
-          flex: 14,
-        ),
+        // const Spacer(flex: 14),
       ],
     );
   }
