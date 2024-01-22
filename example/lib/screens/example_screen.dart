@@ -87,6 +87,8 @@ class _M7ExpampleScreenState extends State<M7ExpampleScreen> {
       ),
       circleIndicator:
           const Center(child: CircularProgressIndicator.adaptive()),
+      styleAnimatedContainer:
+          TextStyle(fontSize: 24, fontWeight: FontWeight.w300),
       config: M7DetectionConfig(
         steps: _veificationSteps,
         startWithInfoScreen: false,

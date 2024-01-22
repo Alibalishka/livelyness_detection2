@@ -4,11 +4,13 @@ class M7LivelynessDetectionStepOverlay extends StatefulWidget {
   final List<M7LivelynessStepItem> steps;
   final VoidCallback onCompleted;
   final Widget circleIndicator;
+  final TextStyle styleAnimatedContainer;
   const M7LivelynessDetectionStepOverlay({
     Key? key,
     required this.steps,
     required this.onCompleted,
     required this.circleIndicator,
+    required this.styleAnimatedContainer,
   }) : super(key: key);
 
   @override
@@ -73,11 +75,7 @@ class M7LivelynessDetectionStepOverlayState
                         child: Text(
                           widget.steps[index].title,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: widget.styleAnimatedContainer,
                         ),
                       ),
                     ),

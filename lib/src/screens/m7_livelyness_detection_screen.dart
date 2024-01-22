@@ -14,6 +14,7 @@ class M7LivelynessDetectionScreenV1 extends StatefulWidget {
   final Color backgroundColor;
   final Widget circleIndicator;
   final Widget description;
+  final TextStyle styleAnimatedContainer;
   const M7LivelynessDetectionScreenV1({
     required this.config,
     required this.appBar,
@@ -22,6 +23,7 @@ class M7LivelynessDetectionScreenV1 extends StatefulWidget {
     required this.backgroundColor,
     required this.circleIndicator,
     required this.description,
+    required this.styleAnimatedContainer,
     super.key,
   });
 
@@ -465,6 +467,7 @@ class _MLivelyness7DetectionScreenState
                     key: _stepsKey,
                     steps: _steps,
                     circleIndicator: widget.circleIndicator,
+                    styleAnimatedContainer: widget.styleAnimatedContainer,
                     onCompleted: () => Future.delayed(
                       const Duration(milliseconds: 500),
                       () => _takePicture(

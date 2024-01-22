@@ -84,6 +84,7 @@ class M7LivelynessDetection {
       required Color backgroundColor,
       required Widget circleIndicator,
       required Widget description,
+      required TextStyle styleAnimatedContainer,
       required}) async {
     _safeAreaPadding = MediaQuery.of(context).padding;
     final M7CapturedImage? capturedFacePath = await Navigator.of(context).push(
@@ -96,6 +97,7 @@ class M7LivelynessDetection {
                 backgroundColor: backgroundColor,
                 circleIndicator: circleIndicator,
                 description: description,
+                styleAnimatedContainer: styleAnimatedContainer,
               )
           // M7LivelynessDetectionPageV2(config: config),
           ),
