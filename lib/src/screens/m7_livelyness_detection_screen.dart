@@ -36,10 +36,8 @@ class _MLivelyness7DetectionScreenState
     extends State<M7LivelynessDetectionScreenV1> {
   //* MARK: - Private Variables
   //? =========================================================
-  late bool _isInfoStepCompleted;
   late final List<M7LivelynessStepItem> steps;
   CameraController? _cameraController;
-  CustomPaint? _customPaint;
   int _cameraIndex = 0;
   bool _isBusy = false;
   final GlobalKey<M7LivelynessDetectionStepOverlayState> _stepsKey =
@@ -48,7 +46,6 @@ class _MLivelyness7DetectionScreenState
   bool _didCloseEyes = false;
   bool _isTakingPicture = false;
   Timer? _timerToDetectFace;
-  bool _isCaptureButtonVisible = false;
 
   late final List<M7LivelynessStepItem> _steps;
 
@@ -84,7 +81,6 @@ class _MLivelyness7DetectionScreenState
   //? =========================================================
   void _preInitCallBack() {
     _steps = widget.config.steps;
-    _isInfoStepCompleted = !widget.config.startWithInfoScreen;
   }
 
   void _postFrameCallBack() async {
@@ -118,7 +114,6 @@ class _MLivelyness7DetectionScreenState
         _timerToDetectFace?.cancel();
         _timerToDetectFace = null;
         if (widget.config.allowAfterMaxSec) {
-          _isCaptureButtonVisible = true;
           setState(() {});
           return;
         }
@@ -211,18 +206,6 @@ class _MLivelyness7DetectionScreenState
           firstFace,
           inputImage.inputImageData!.size,
           inputImage.inputImageData!.imageRotation,
-        );
-        _customPaint = CustomPaint(
-          painter: painter,
-          child: Container(
-            color: Colors.transparent,
-            height: double.infinity,
-            width: double.infinity,
-            margin: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top,
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-          ),
         );
         if (_isProcessingStep &&
             _steps[_stepsKey.currentState?.currentIndex ?? 0].step ==
@@ -321,7 +304,6 @@ class _MLivelyness7DetectionScreenState
         isCompleted: false,
       );
     }
-    _customPaint = null;
     _didCloseEyes = false;
     if (_stepsKey.currentState?.currentIndex != 0) {
       _stepsKey.currentState?.reset();
@@ -415,18 +397,7 @@ class _MLivelyness7DetectionScreenState
   Widget _buildBody() {
     return Stack(
       children: [
-        _isInfoStepCompleted
-            ? Column(children: [_buildDetectionBody()])
-            : M7LivelynessInfoWidget(
-                onStartTap: () {
-                  if (mounted) {
-                    setState(
-                      () => _isInfoStepCompleted = true,
-                    );
-                  }
-                  _startLiveFeed();
-                },
-              ),
+        Column(children: [_buildDetectionBody()])
       ],
     );
   }
@@ -436,9 +407,6 @@ class _MLivelyness7DetectionScreenState
         _cameraController?.value.isInitialized == false) {
       return Expanded(child: widget.circleIndicator);
     }
-    // final size = MediaQuery.of(context).size;
-    // var scale = size.aspectRatio * _cameraController!.value.aspectRatio;
-    // if (scale < 1) scale = 1 / scale;
     final Widget cameraView = CameraPreview(_cameraController!);
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -481,53 +449,6 @@ class _MLivelyness7DetectionScreenState
             const SizedBox(height: 24),
             widget.description,
           ],
-        )
-        // Column(
-        //   children: [
-        //     // Stack(
-        //     //   children: [
-        //     //     // Positioned.fill(child: cameraView),
-        //     //     // if (_customPaint != null) _customPaint!,
-        //     //     // M7LivelynessDetectionStepOverlay(
-        //     //     //   key: _stepsKey,
-        //     //     //   steps: _steps,
-        //     //     //   onCompleted: () => Future.delayed(
-        //     //     //     const Duration(milliseconds: 500),
-        //     //     //     () => _takePicture(
-        //     //     //       didCaptureAutomatically: true,
-        //     //     //     ),
-        //     //     //   ),
-        //     //     // ),
-        //     //     // Visibility(
-        //     //     //   visible: _isCaptureButtonVisible,
-        //     //     //   child: Column(
-        //     //     //     mainAxisAlignment: MainAxisAlignment.start,
-        //     //     //     crossAxisAlignment: CrossAxisAlignment.stretch,
-        //     //     //     mainAxisSize: MainAxisSize.min,
-        //     //     //     children: [
-        //     //     //       const Spacer(flex: 20),
-        //     //     //       MaterialButton(
-        //     //     //         onPressed: () => _takePicture(
-        //     //     //           didCaptureAutomatically: false,
-        //     //     //         ),
-        //     //     //         color: widget.config.captureButtonColor ??
-        //     //     //             Theme.of(context).primaryColor,
-        //     //     //         textColor: Colors.white,
-        //     //     //         padding: const EdgeInsets.all(16),
-        //     //     //         shape: const CircleBorder(),
-        //     //     //         child: const Icon(
-        //     //     //           Icons.camera_alt,
-        //     //     //           size: 24,
-        //     //     //         ),
-        //     //     //       ),
-        //     //     //       const Spacer(),
-        //     //     //     ],
-        //     //     //   ),
-        //     //     // ),
-        //     //   ],
-        //     // ),
-        //   ],
-        // ),
-        );
+        ));
   }
 }

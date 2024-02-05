@@ -51,9 +51,7 @@ class M7LivelynessDetectionStepOverlayState
       width: double.infinity,
       color: Colors.transparent,
       child: Stack(
-        // fit: StackFit.expand,
         children: [
-          // _buildBody(),
           PageView.builder(
             controller: _pageController,
             itemCount: widget.steps.length,
@@ -139,89 +137,6 @@ class M7LivelynessDetectionStepOverlayState
 
   //* MARK: - Private Methods for UI Components
   //? =========================================================
-  Widget _buildBody() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // SizedBox(
-        //   height: 10,
-        //   width: double.infinity,
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.start,
-        //     crossAxisAlignment: CrossAxisAlignment.center,
-        //     mainAxisSize: MainAxisSize.min,
-        //     children: [
-        //       Expanded(
-        //         flex: _currentIndex + 1,
-        //         child: Container(
-        //           decoration: const BoxDecoration(
-        //             borderRadius: BorderRadius.only(
-        //               topRight: Radius.circular(20),
-        //               bottomRight: Radius.circular(20),
-        //             ),
-        //             color: Colors.transparent,
-        //           ),
-        //         ),
-        //       ),
-        //       Expanded(
-        //         flex: widget.steps.length - (_currentIndex + 1),
-        //         child: Container(
-        //           color: Colors.transparent,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // const Spacer(),
-        Flexible(
-          flex: 2,
-          child: AbsorbPointer(
-            absorbing: true,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: widget.steps.length,
-              itemBuilder: (context, index) {
-                return _buildAnimatedWidget(
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
-                            blurRadius: 5,
-                            spreadRadius: 2.5,
-                            color: Colors.black12,
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      margin: const EdgeInsets.symmetric(horizontal: 30),
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        widget.steps[index].title,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  isExiting: index != _currentIndex,
-                );
-              },
-            ),
-          ),
-        ),
-        // const Spacer(flex: 14),
-      ],
-    );
-  }
 
   Widget _buildAnimatedWidget(
     Widget child, {

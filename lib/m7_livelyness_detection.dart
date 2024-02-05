@@ -98,9 +98,7 @@ class M7LivelynessDetection {
                 circleIndicator: circleIndicator,
                 description: description,
                 styleAnimatedContainer: styleAnimatedContainer,
-              )
-          // M7LivelynessDetectionPageV2(config: config),
-          ),
+              )),
     );
     return capturedFacePath;
   }
